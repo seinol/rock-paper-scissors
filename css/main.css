@@ -1,0 +1,122 @@
+body {
+    margin: 8px;
+}
+
+.main-container {
+    max-width: 600px;
+    margin: auto;
+    width: 50%;
+}
+
+
+/* HISTORY */
+.history__title {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.history table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.history td, .history th {
+    border: none;
+    text-align: left;
+    padding: 3px;
+}
+
+.history tr:nth-child(even) {
+    background-color: #00FFFF;
+}
+
+
+/* PLAY GAME */
+.play-game_player-name {
+    font-weight: bold;
+}
+
+.play-game__hand {
+    text-align: center;
+}
+
+.play-game__hand--button {
+    outline: none;
+}
+
+.play-game__content {
+    text-align: center;
+}
+
+.play-game__enemy-hand {
+    border: 1px groove black;
+    padding: 15px;
+    width: 135px;
+    margin: 0 auto 0 auto;
+}
+
+.play-game__back--button {
+    height: 45px;
+    width: 170px;
+}
+
+
+/* START PAGE */
+.change-server {
+    text-align: center;
+}
+
+.change-server__button {
+    width: 100%;
+    height: 45px;
+}
+
+.ranking {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.start-game__button-container {
+    text-align: center;
+}
+
+.start-game__button {
+    height: 45px;
+    width: 120px;
+}
+
+
+/* LOADING SPINNER */
+.loader {
+    margin: 15px auto 15px auto;
+    border-radius: 50%;
+    border: 13px solid #009999;
+    border-right-color: #CCFFFF;
+    border-bottom-color: #66FFFF;
+    border-left-color: #00FFFF;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+

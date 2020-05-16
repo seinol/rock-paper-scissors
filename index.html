@@ -1,18 +1,123 @@
 <!doctype html>
 <html lang="de">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="css/normalize.min.css">
-        <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/normalize.min.css">
+    <link rel="stylesheet" href="css/main.css">
 
-        <title>wed1-testat</title>
-    </head>
-    <body>
-        <script src="js/main.js"></script>
+    <title>WED1 Testat</title>
+</head>
+<body>
 
+<script src="js/main.js"></script>
 
-    </body>
+<div class="main-container">
+
+    <div id="js-start-page">
+        <div class="change-server">
+            <button id="js-change-server-button" class="change-server__button" type="button">
+                Wechsel zu Server
+            </button>
+        </div>
+        <div id="js-loader" class="loader" hidden></div>
+        <div id="js-ranking" class="ranking">
+            <h1>Rangliste</h1>
+            <h4>1. Rang mit 0 Siegen</h4>
+            <p>Anonymaus</p>
+        </div>
+        <div id="js-start-game" class="start-game">
+            <hr>
+            <p>Starte ein neues Spiel</p>
+            <p>
+                <label for="js-player-name-input">Name</label>
+                <input id="js-player-name-input" type="text">
+            </p>
+            <div class="start-game__button-container">
+                <button id="js-start-game-button" class="start-game__button" type="button">
+                    Spiel starten
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="js-play-game" class="play-game" hidden>
+        <p>
+            <span class="play-game_player-name" id="js-player-name">
+            </span>
+            <span>Wähle deine Hand!</span>
+        </p>
+        <div id="js-play-game-hand" class="play-game__hand">
+
+            <!--            <button id="js-shear-hand-button" class="play-game__hand&#45;&#45;button">
+                            Schere
+                        </button>
+                        <button id="js-stone-hand-button" class="play-game__hand&#45;&#45;button">
+                            Stein
+                        </button>
+                        <button id="js-paper-hand-button" class="play-game__hand&#45;&#45;button">
+                            Papier
+                        </button>
+                        <button id="js-fountain-hand-button" class="play-game__hand&#45;&#45;button">
+                            Brunnen
+                        </button>
+                        <button id="js-matchstick-hand-button" class="play-game__hand&#45;&#45;button">
+                            Streichholz
+                        </button>-->
+        </div>
+        <div class="play-game__content">
+            <p id="js-next-round" class="play-game__next-round" hidden>
+                Nächste Runde in <span id="js-next-round-counter">3</span>
+            </p>
+            <p id="js-user-hand" class="play-game__user-hand"></p>
+            <p id="js-versus-text" class="play-game__versus">VS</p>
+            <p id="js-enemy-hand" class="play-game__enemy-hand">?</p>
+        </div>
+        <p>
+            <button id="js-back-to-ranking-button" class="play-game__back--button">
+                Zurück zum Ranking
+            </button>
+        </p>
+    </div>
+
+    <div id="js-history" class="history" hidden>
+        <hr>
+        <div class="history__table">
+            <table id="js-history-table">
+                <caption class="history__title">History</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Resultate</th>
+                    <th scope="col">Spieler</th>
+                    <th scope="col">Gegner</th>
+                </tr>
+                </thead>
+                <tbody>
+<!--                <tr>
+                     <td>&#x2714;</td>
+                     <td>Stein</td>
+                     <td>Schere</td>
+                 </tr>
+                 <tr>
+                     <td>&#x2718;</td>
+                     <td>Streichholz</td>
+                     <td>Stein</td>
+                 </tr>
+                 <tr>
+                     <td>=</td>
+                     <td>Papier</td>
+                     <td>Papier</td>
+                 </tr>-->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>document.addEventListener('DOMContentLoaded', initApp);</script>
+
+</body>
 </html>
