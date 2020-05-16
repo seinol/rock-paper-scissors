@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>WED1 - Testat</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link
+      rel="icon"
+      href="./HSR.Template.Exercises/icon-document.png"
+      type="image/png"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./HSR.Template.Exercises/documentStyle.css"
+    />
+
+    <style>
+      video {
+        width: 500px;
+        height: auto;
+      }
+
+      .alert {
+        background: maroon;
+        color: white;
+        border-radius: 7px;
+        border: 1.5px black solid;
+        padding: 0px 5px;
+      }
+
+      .warning {
+        background: darkorange;
+        color: black;
+        border-radius: 7px;
+        border: 1.5px black solid;
+        padding: 0px 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      WED1 - Testat
+    </h1>
+
+    <h2>Ziele des Testates</h2>
+    <p>In der Vorlesung behandelte Aspekte vertiefen und anwenden.</p>
+
+    <h2>Allgemeine Hinweise</h2>
+    <ul>
+      <li>
+        <p>
+          Aufgrund von der aktuellen Situation ist das Testat eine Einzelarbeit.
+        </p>
+      </li>
+    </ul>
+
+    <h2>Aufgabenbeschreibung</h2>
+    <p>
+      Ihre Aufgabe ist es, das Spiel
+      <a
+        href="https://de.wikipedia.org/wiki/Schere,_Stein,_Papier#F%C3%BCnf_Gesten"
+        >Schwere Stein Papier (Brunnen Streichholz)</a
+      >
+      zu implementieren. Das Testat ist in zwei Teile aufgeteilt.
+    </p>
+
+    <h3>Teil 1: Schwere Stein Papier mit In-Memory</h3>
+    <p>
+      Ziel vom Teil 1 ist es alle Features zu implementieren und die Daten im
+      <strong>Memory</strong> zu halten.
+    </p>
+    <p>
+      Folgende Features sind nötig um den ersten Teil vom Testat zu bestehen:
+    </p>
+    <ul>
+      <li>
+        Startseite
+        <ul>
+          <li>Rangliste</li>
+          <li>Eingabe vom Namen (Required)</li>
+          <li>Spiel Starten</li>
+        </ul>
+        <img
+          style="width: 300px; display: block;"
+          src="media/start.PNG"
+          alt="Darstellung von der Startseite"
+        />
+      </li>
+      <li>
+        Spielseite
+        <ul>
+          <li>Spieler-Name darstellen</li>
+          <li>Darstellen der möglichen Hände</li>
+          <li>Auswahl der Hand</li>
+          <li>Anzeigen der Wahl der der PC getroffen hat.</li>
+          <li>Darstellen vom Resultat.</li>
+          <li>
+            Zwischen den einzelnen Spielen ist eine Wartezeit einzuhalten.
+          </li>
+          <li>
+            History: Die History zeigt von der aktuellen Spiel-Session alle
+            vergangen Spiele an.
+          </li>
+          <li>Zurück zu Startseite.</li>
+        </ul>
+        <img
+          style="width: 300px; display: block;"
+          src="media/Spiel.PNG"
+          alt="Darstellung von der Startseite"
+        />
+      </li>
+    </ul>
+
+    <h3>Teil 2: Schwere Stein Papier mit Server-Anbindung</h3>
+    <p>
+      Ziel vom Teil 2 ist es dem Benutzer anzubieten ob er mit dem Server
+      Kommunizieren möchte oder Lokal Spielen möchte.
+    </p>
+    <p>Nachfolgend die API vom Server:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>METHODE</th>
+          <th>URL</th>
+          <th>Beschreibung</th>
+          <th>Rückgabe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GET</td>
+          <td>/ranking</td>
+          <td>Daten für die Rangliste</td>
+          <td>
+            <a
+              href="https://us-central1-schere-stein-papier-ee0c9.cloudfunctions.net/widgets/ranking"
+              >Beispiel</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>/play?playerName=[name]<br />&playerHand=[playerHand]</td>
+          <td>Lässt den Server ein Spiel auswerten</td>
+          <td>
+            <a
+              href="https://us-central1-schere-stein-papier-ee0c9.cloudfunctions.net/widgets/play?playerName=Michael&playerHand=Stein"
+              >Beispiel</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Folgende Features sind nötig um den zweiten Teil vom Testat zu bestehen:
+    </p>
+    <ul>
+      <li>
+        Startseite
+        <ul>
+          <li>Wechseln vom Lokalen und Server Modus</li>
+          <li>Die Webseite soll sich der gewählte Modus merken</li>
+          <li>Darstellen vom Ranking vom Server oder Lokal</li>
+        </ul>
+      </li>
+      <li>
+        Spielseite
+        <ul>
+          <li>
+            Das Spiel soll mit dem korrekten Services nutzen ( Server oder
+            In-Memory ).
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>Video</h3>
+    <p>Das Video zeigt die nötigen Features.</p>
+    <video controls>
+      <source src="media/Video_2.webm" type="video/webm" />
+      <source src="media/Video_2.mp4" type="video/mp4" />
+    </video>
+
+    <h3>Vorgehen</h3>
+    <ol>
+      <li>
+        Erstellen Sie ein neues HTML-Projekt.
+      </li>
+      <li>
+        Versuchen Sie Feature um Feature zu implementieren. z.B. Das Ranking
+        darstellen.
+      </li>
+      <li>
+        Fragen Sie den Übungsbetreuer wie Sie weitervorgehen können.
+      </li>
+    </ol>
+
+    <h3>Kriterien/Anforderungen</h3>
+    <ul>
+      <li>
+        HTML5, CSS und JavaScript Standardkonformität muss erfüllt werden.
+      </li>
+      <li>
+        Überprüfen Sie ihre Arbeit mit dem W3C Validator vor der Abgabe und
+        beheben gefundene Fehler.
+      </li>
+      <li>
+        Ihre Lösung muss in den neusten Versionen von 2 der 4 grossen Browsern
+        (FF, GC, IE, AS) getestet worden sein und ohne Fehler funktionieren.
+      </li>
+      <li>Die Lösung soll sinnvoll gestyled sein.</li>
+      <li>Der JavaScript-Code muss sinnvoll aufgeteilt sein.</li>
+      <li>
+        Die Lösung soll eine "Single Page" sein.
+      </li>
+    </ul>
+
+    <h3>Review & Abgabe</h3>
+    <p>
+      Senden Sie ihre Lösung per E-Mail an Ihren Betreuer mit folgendem Inhalt:
+    </p>
+    <ul>
+      <li>Ihre Lösung als ZIP-File</li>
+      <li>Angabe der getesteten Browser mit Versionsnummer</li>
+      <li>Screenshot der W3C Validation.</li>
+    </ul>
+
+    <h3>Nachkorrektur</h3>
+    <p>
+      Jede Person hat die Möglichkeit für eine Nachkorrektur. Diese erfolgt eine
+      Woche später. Eine zweite Nachkorrektur wird nicht akzeptiert.
+      Nachkorrekturen müssen entweder präsentiert werden, oder benötigen nur
+      eine erneute Abgabe der korrigierten Lösung per Mail an den Betreuer. Der
+      Betreuer entscheidet was nötig ist.
+    </p>
+
+    <h2>Termine</h2>
+    <dl>
+      <dt>Zwischenreview ( optional )</dt>
+      <dd>W10</dd>
+      <dt>Testatabgabe per Mail</dt>
+      <dd>W14 (frühere Abgabe ist möglich)</dd>
+    </dl>
+
+    <h2>Q &AMP; A</h2>
+    Siehe
+    <a href="https://moodle.hsr.ch/mod/page/view.php?id=131880">
+      WED1 Moodle Seite zum Testat Q &AMP; A</a
+    >
+  </body>
+</html>
