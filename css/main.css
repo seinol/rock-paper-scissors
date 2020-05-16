@@ -5,7 +5,7 @@ body {
 .main-container {
     max-width: 600px;
     margin: auto;
-    width: 50%;
+    width: 100%;
 }
 
 
@@ -48,6 +48,10 @@ body {
 
 .play-game__content {
     text-align: center;
+}
+
+.play-game__user-hand {
+    font-weight: bold;
 }
 
 .play-game__enemy-hand {
