@@ -2,6 +2,10 @@ body {
     margin: 8px;
 }
 
+button {
+    cursor: pointer;
+}
+
 .main-container {
     max-width: 600px;
     margin: auto;
@@ -40,6 +44,11 @@ body {
 
 .play-game__hand {
     text-align: center;
+}
+
+.play-game__hand button {
+    height: 35px;
+    width: 100px;
 }
 
 .play-game__hand--button {
