@@ -7,11 +7,11 @@
 
     <link rel="stylesheet" href="css/main.css">
 
+    <script src="js/main.js" type="module"></script>
+
     <title>WED1 Testat</title>
 </head>
 <body>
-
-<script src="js/main.js"></script>
 
 <!-- TODO use more html5 tags rather than div -->
 <div class="main-container">
@@ -44,7 +44,7 @@
 
     <div id="js-play-game" class="play-game" hidden>
         <p>
-            <span class="play-game_player-name" id="js-player-name"></span>
+            <span class="play-game__player-name" id="js-player-name"></span>
             <span>Wähle deine Hand!</span>
         </p>
         <div id="js-play-game-hand" class="play-game__hand"></div>
@@ -81,10 +81,6 @@
     </div>
 
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', initApp);
-</script>
 
 </body>
 </html>

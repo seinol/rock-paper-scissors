@@ -38,7 +38,7 @@ button {
 
 
 /* PLAY GAME */
-.play-game_player-name {
+.play-game__player-name {
     font-weight: bold;
 }
 
@@ -49,10 +49,19 @@ button {
 .play-game__hand button {
     height: 35px;
     width: 100px;
+    outline: none;
 }
 
-.play-game__hand--button {
-    outline: none;
+.play-game__hand--red {
+    color: red;
+}
+
+.play-game__hand--green {
+    color: green;
+}
+
+.play-game__hand--black {
+    color: black;
 }
 
 .play-game__content {

@@ -1,17 +1,21 @@
+import {getSortedRanking, getRandomChoice} from "./service.js";
+
+document.addEventListener('DOMContentLoaded', initApp);
 function initApp() {
+
   'use strict';
 
   const HAND_ITEMS = ['Schere', 'Stein', 'Papier', 'Brunnen', 'Streichholz'];
   const HAND_ITEMS_REFERENCE = ['js-scissors-hand-button', 'js-rock-hand-button', 'js-paper-hand-button',
     'js-fountain-hand-button', 'js-matchstick-hand-button'];
-  const SERVER_BASE_URL = "https://us-central1-schere-stein-papier-ee0c9.cloudfunctions.net";
   const DEFAULT_USER_NAME = "Anonymaus";
-  const NEXT_ROUND_COUNTER_TIME = 3;
+  const NEXT_ROUND_COUNTER_TIME = 1;
   const MAX_RANK_ITEMS = 10;
 
   let server = false;
   let playerName = DEFAULT_USER_NAME;
 
+  // DOM references
   const startPageContainer = document.getElementById('js-start-page');
   const changeServerButton = document.getElementById('js-change-server-button');
   const loaderContainer = document.getElementById('js-loader');
@@ -33,6 +37,7 @@ function initApp() {
   const historyContainer = document.getElementById('js-history');
   const historyTable = document.getElementById('js-history-table');
 
+  // view
   function initView() {
     let buttons = document.createElement("div");
     HAND_ITEMS_REFERENCE.forEach((referenceId, index) => {
@@ -42,6 +47,7 @@ function initApp() {
       buttons.appendChild(button);
     });
     handButtonsContainer.append(buttons);
+    clearView();
   }
 
   async function updateView() {
@@ -61,62 +67,79 @@ function initApp() {
       let cellOne = row.insertCell(0);
       let cellTwo = row.insertCell(1);
       let cellThree = row.insertCell(2);
-      cellOne.innerHTML = recentHistoryItem[0];
+      cellOne.innerHTML = getResultHtmlSymbol(recentHistoryItem[0]);
       cellTwo.innerHTML = recentHistoryItem[1];
       cellThree.innerHTML = recentHistoryItem[2];
     }
 
-    let counter = 1;
+
+    // TODO make real ranking (same rank for same winning count)
+    let counter = 0;
+    let countOfWinningsBefore;
+    let countOfSkipped = 0;
     rankingContent.innerHTML = "";
     activateLoadingSpinner(true);
     if (server) {
-      let response = await fetch(SERVER_BASE_URL + "/widgets/ranking", {
-        method: 'get'
-      });
-      let responseData = await response.json();
-      let sortedRankingList = Object.values(responseData).sort((a, b) => b['win'] - a['win']).slice(0, 10);
-      sortedRankingList.forEach(userScore => {
-        let rankingTitle = document.createElement("h4");
-        rankingTitle.innerText =
-          counter + ". Rang mit " + userScore["win"] + (userScore["win"] === 1 ? " Sieg" : " Siegen");
-        let rankingBody = document.createElement("p");
-        rankingBody.innerText = userScore["user"];
-        rankingContent.appendChild(rankingTitle);
-        rankingContent.appendChild(rankingBody);
-        counter++;
+      Object.values(await getSortedRanking()).forEach(userScore => {
+        if (countOfWinningsBefore === userScore["win"]) {
+          countOfSkipped++;
+        } else {
+          counter += countOfSkipped + 1;
+          countOfSkipped = 0;
+        }
+        rankingContent.appendChild(getRankingTitle(userScore["win"], counter));
+        rankingContent.appendChild(getRankingBody(userScore["user"]));
+        countOfWinningsBefore = userScore["win"];
+
       })
     } else {
       getLocalStorageItem("userScores").forEach(userScore => {
-        let rankingTitle = document.createElement("h4");
-        rankingTitle.innerText = counter + ". Rang mit " + userScore[1] + (userScore[1] === 1 ? " Sieg" : " Siegen");
-        let rankingBody = document.createElement("p");
-        rankingBody.innerText = userScore[0];
-        rankingContent.appendChild(rankingTitle);
-        rankingContent.appendChild(rankingBody);
-        counter++;
+        if (countOfWinningsBefore === userScore[1]) {
+          countOfSkipped++;
+        } else {
+          counter += countOfSkipped + 1;
+          countOfSkipped = 0;
+        }
+        rankingContent.appendChild(getRankingTitle(userScore[1], counter));
+        rankingContent.appendChild(getRankingBody(userScore[0]));
+        countOfWinningsBefore = userScore[1];
       });
     }
     activateLoadingSpinner(false);
   }
 
+  function getRankingTitle(countOfWinnings, rank) {
+    let rankingTitle = document.createElement("h4");
+    rankingTitle.innerText = rank + ". Rang mit " + countOfWinnings + (countOfWinnings === 1 ? " Sieg" : " Siegen");
+    return rankingTitle;
+  }
+
+  function getRankingBody(userName) {
+    let rankingBody = document.createElement("p");
+    rankingBody.innerText = userName;
+    return rankingBody;
+  }
+
   function clearView() {
+    overwriteLocalStorageItem("history", []);
     historyTable.querySelectorAll(".js-history-row").forEach(row => row.remove());
     rankingContent.innerHTML = "";
     userHandText.innerText = "...";
     enemyHandText.innerText = "?"
-    userHandText.style.color = 'black';
-    enemyHandText.style.color = 'black';
-  }
-
-  function initLocalStorage() {
-    if (getLocalStorageItem("history") === null || getLocalStorageItem("userScores") === null) {
-      window.localStorage.setItem("history", JSON.stringify([]));
-      window.localStorage.setItem("userScores", JSON.stringify([]));
-    }
+    userHandText.classList.add("play-game__hand--black");
+    enemyHandText.classList.add("play-game__hand--black");
+    removeColorClasses();
   }
 
   // controller & helper functions
-  function hideAllContainers() {
+  function initLocalStorage() {
+    if (getLocalStorageItem("history") === null || getLocalStorageItem("userScores") === null) {
+      overwriteLocalStorageItem("history", []);
+      overwriteLocalStorageItem("userScores", []);
+    }
+  }
+
+  function hideAndClearAllContainers() {
     startPageContainer.hidden = true;
     playGameContainer.hidden = true;
     historyContainer.hidden = true;
@@ -124,7 +147,7 @@ function initApp() {
   }
 
   function showGame() {
-    hideAllContainers();
+    hideAndClearAllContainers();
     playerName = playerNameInput.value.length > 0 ? playerNameInput.value : DEFAULT_USER_NAME;
     if (!server) {
       pushPlayerToLocalStorage(playerName);
@@ -135,13 +158,22 @@ function initApp() {
   }
 
   function showStartPage() {
-    hideAllContainers();
+    hideAndClearAllContainers();
     startPageContainer.hidden = false;
-    overwriteLocalStorageItem("history", []);
     updateView();
   }
 
-  async function handSelect(event) {
+  function activateLoadingSpinner(state) {
+    if (state) {
+      rankingContainer.hidden = true;
+      loaderContainer.hidden = false;
+    } else {
+      loaderContainer.hidden = true;
+      rankingContainer.hidden = false;
+    }
+  }
+
+  async function handleHandSelection(event) {
     let userHandReferenceId = event.target.id
     let userHand = "";
     HAND_ITEMS_REFERENCE.forEach((value, index) => {
@@ -153,37 +185,61 @@ function initApp() {
 
     updateHandButtonsDisabled(true);
 
-    let randomHandReferenceId = await getRandomAnswer(userHand);
-    let randomHand = HAND_ITEMS[HAND_ITEMS_REFERENCE.indexOf(randomHandReferenceId)];
+    let randomHandReferenceId = await getRandomResult(userHand);
+    handleGameResult(userHandReferenceId, randomHandReferenceId, userHand,
+      HAND_ITEMS[HAND_ITEMS_REFERENCE.indexOf(randomHandReferenceId)]);
+
+    updateView();
+    waitingCounter();
+  }
+
+  function handleGameResult(userHandReferenceId, randomHandReferenceId, userHand, randomHand) {
     enemyHandText.innerText = randomHand;
+
+    // TODO refactor this with -1 0 1
     if (userHandReferenceId === randomHandReferenceId) {
-      userHandText.style.color = 'black';
-      enemyHandText.style.color = 'black';
-      pushToLocalStorageItem("history", ["TIE", userHand, randomHand], 10);
+      removeColorClasses();
+      userHandText.classList.add("play-game__hand--black");
+      enemyHandText.classList.add("play-game__hand--black");
+      pushToLocalStorageItem("history", [0, userHand, randomHand], 10);
     } else {
       if (checkIfUserWins(userHandReferenceId, randomHandReferenceId)) {
-        userHandText.style.color = 'green';
-        enemyHandText.style.color = 'red';
-        pushToLocalStorageItem("history", ["WIN", userHand, randomHand], 10);
+        removeColorClasses();
+        userHandText.classList.add("play-game__hand--green");
+        enemyHandText.classList.add("play-game__hand--red");
+        pushToLocalStorageItem("history", [1, userHand, randomHand], 10);
         let userScores = getLocalStorageItem("userScores");
         userScores.forEach((value, index) => {
           if (value[0] === playerName) {
             userScores[index][1] = value[1] + 1;
           }
         });
-        userScores.sort(userScoresSorting);
-        userScores.reverse();
+        userScores.sort((a, b) => {
+          if (a[1] === b[1]) {
+            return 0;
+          } else {
+            return (a[1] > b[1]) ? -1 : 1;
+          }
+        });
         if (!server) {
           overwriteLocalStorageItem("userScores", userScores);
         }
       } else {
-        userHandText.style.color = 'red';
-        enemyHandText.style.color = 'green';
-        pushToLocalStorageItem("history", ["LOSE", userHand, randomHand], 10);
+        removeColorClasses();
+        userHandText.classList.add("play-game__hand--red");
+        enemyHandText.classList.add("play-game__hand--green");
+        pushToLocalStorageItem("history", [-1, userHand, randomHand], 10);
       }
     }
-    updateView();
-    waitingCounter();
+  }
+
+  function removeColorClasses() {
+    userHandText.classList.remove("play-game__hand--green");
+    enemyHandText.classList.remove("play-game__hand--green");
+    userHandText.classList.remove("play-game__hand--red");
+    enemyHandText.classList.remove("play-game__hand--red");
+    userHandText.classList.remove("play-game__hand--black");
+    enemyHandText.classList.remove("play-game__hand--black");
   }
 
   function waitingCounter() {
@@ -211,15 +267,24 @@ function initApp() {
     });
   }
 
-  function userScoresSorting(a, b) {
-    if (a[1] === b[1]) {
-      return 0;
-    } else {
-      return (a[1] < b[1]) ? -1 : 1;
+  function getResultHtmlSymbol(result) {
+    let resultSymbol = "";
+    switch (result) {
+      case 1:
+        resultSymbol = "&#x2714;";
+        break;
+      case 0:
+        resultSymbol = "=";
+        break;
+      case -1:
+        resultSymbol = "&#x2718;";
+        break;
     }
+    return resultSymbol;
   }
 
   function checkIfUserWins(userChoice, computerChoice) {
+    // TODO use 2d array
     if (userChoice === "js-scissors-hand-button") {
       return computerChoice === "js-paper-hand-button" || computerChoice === "js-matchstick-hand-button";
     }
@@ -238,13 +303,14 @@ function initApp() {
     return false;
   }
 
+  // local storage helpers
   function pushToLocalStorageItem(key, value, limit) {
     let currentValue = JSON.parse(window.localStorage.getItem(key));
     currentValue.unshift(value);
     if (currentValue.length > limit) {
       currentValue.length = limit;
     }
-    window.localStorage.setItem(key, JSON.stringify(currentValue));
+    overwriteLocalStorageItem(key, currentValue);
   }
 
   function pushPlayerToLocalStorage(name) {
@@ -255,7 +321,7 @@ function initApp() {
     });
     if (!userExists) {
       currentValue.push([name, 0]);
-      window.localStorage.setItem("userScores", JSON.stringify(currentValue));
+      overwriteLocalStorageItem("userScores", currentValue);
     }
   }
 
@@ -267,13 +333,9 @@ function initApp() {
     window.localStorage.setItem(key, JSON.stringify(newValue));
   }
 
-  async function getRandomAnswer(userHand) {
+  async function getRandomResult(userHand) {
     if (server) {
-      const response =
-        await fetch(SERVER_BASE_URL + "/widgets/play?playerName=" + playerName + "&playerHand=" + userHand, {
-          method: 'get'
-        });
-      let responseData = await response.json();
+      let responseData = await getRandomChoice(playerName, userHand);
       return HAND_ITEMS_REFERENCE[HAND_ITEMS.indexOf(responseData["choice"])];
     } else {
       let min = Math.ceil(0);
@@ -282,17 +344,7 @@ function initApp() {
     }
   }
 
-  function activateLoadingSpinner(state) {
-    if (state) {
-      rankingContainer.hidden = true;
-      loaderContainer.hidden = false;
-    } else {
-      loaderContainer.hidden = true;
-      rankingContainer.hidden = false;
-    }
-  }
-
-  // init view / display initial state
+  // init view and display initial state
   initView();
   initLocalStorage();
   updateView();
@@ -305,7 +357,7 @@ function initApp() {
     updateView();
   });
   handButtonsContainer.querySelectorAll("button").forEach(element => {
-      element.addEventListener('click', handSelect)
+      element.addEventListener('click', handleHandSelection)
     }
   );
 
