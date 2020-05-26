@@ -1,15 +1,15 @@
-import {getSortedRanking, getRandomChoice} from "./service.js";
+import { getSortedRanking, getRandomChoice } from "./service.js";
 
 document.addEventListener('DOMContentLoaded', initApp);
-function initApp() {
 
+function initApp() {
   'use strict';
 
   const HAND_ITEMS = ['Schere', 'Stein', 'Papier', 'Brunnen', 'Streichholz'];
   const HAND_ITEMS_REFERENCE = ['js-scissors-hand-button', 'js-rock-hand-button', 'js-paper-hand-button',
     'js-fountain-hand-button', 'js-matchstick-hand-button'];
   const DEFAULT_USER_NAME = "Anonymaus";
-  const NEXT_ROUND_COUNTER_TIME = 1;
+  const NEXT_ROUND_COUNTER_TIME = 3;
   const MAX_RANK_ITEMS = 10;
 
   let server = false;
@@ -72,10 +72,8 @@ function initApp() {
       cellThree.innerHTML = recentHistoryItem[2];
     }
 
-
-    // TODO make real ranking (same rank for same winning count)
     let counter = 0;
-    let countOfWinningsBefore;
+    let countOfWinningsBefore = 0;
     let countOfSkipped = 0;
     rankingContent.innerHTML = "";
     activateLoadingSpinner(true);
@@ -184,6 +182,7 @@ function initApp() {
     })
 
     updateHandButtonsDisabled(true);
+    removeColorClasses();
 
     let randomHandReferenceId = await getRandomResult(userHand);
     handleGameResult(userHandReferenceId, randomHandReferenceId, userHand,
@@ -193,46 +192,6 @@ function initApp() {
     waitingCounter();
   }
 
-  function handleGameResult(userHandReferenceId, randomHandReferenceId, userHand, randomHand) {
-    enemyHandText.innerText = randomHand;
-
-    // TODO refactor this with -1 0 1
-    if (userHandReferenceId === randomHandReferenceId) {
-      removeColorClasses();
-      userHandText.classList.add("play-game__hand--black");
-      enemyHandText.classList.add("play-game__hand--black");
-      pushToLocalStorageItem("history", [0, userHand, randomHand], 10);
-    } else {
-      if (checkIfUserWins(userHandReferenceId, randomHandReferenceId)) {
-        removeColorClasses();
-        userHandText.classList.add("play-game__hand--green");
-        enemyHandText.classList.add("play-game__hand--red");
-        pushToLocalStorageItem("history", [1, userHand, randomHand], 10);
-        let userScores = getLocalStorageItem("userScores");
-        userScores.forEach((value, index) => {
-          if (value[0] === playerName) {
-            userScores[index][1] = value[1] + 1;
-          }
-        });
-        userScores.sort((a, b) => {
-          if (a[1] === b[1]) {
-            return 0;
-          } else {
-            return (a[1] > b[1]) ? -1 : 1;
-          }
-        });
-        if (!server) {
-          overwriteLocalStorageItem("userScores", userScores);
-        }
-      } else {
-        removeColorClasses();
-        userHandText.classList.add("play-game__hand--red");
-        enemyHandText.classList.add("play-game__hand--green");
-        pushToLocalStorageItem("history", [-1, userHand, randomHand], 10);
-      }
-    }
-  }
-
   function removeColorClasses() {
     userHandText.classList.remove("play-game__hand--green");
     enemyHandText.classList.remove("play-game__hand--green");
@@ -240,6 +199,40 @@ function initApp() {
     enemyHandText.classList.remove("play-game__hand--red");
     userHandText.classList.remove("play-game__hand--black");
     enemyHandText.classList.remove("play-game__hand--black");
+  }
+
+  function handleGameResult(userHandReferenceId, randomHandReferenceId, userHand, randomHand) {
+    enemyHandText.innerText = randomHand;
+
+    // TODO possible optimization: 2d array with -1, 0 and 1 for lose, tie and win
+    if (userHandReferenceId === randomHandReferenceId) {
+      userHandText.classList.add("play-game__hand--black");
+      enemyHandText.classList.add("play-game__hand--black");
+      pushToLocalStorageItem("history", [0, userHand, randomHand], 10);
+    } else {
+      if (checkIfUserWins(userHandReferenceId, randomHandReferenceId)) {
+        userHandText.classList.add("play-game__hand--green");
+        enemyHandText.classList.add("play-game__hand--red");
+        pushToLocalStorageItem("history", [1, userHand, randomHand], 10);
+
+        if (!server) {
+          let userScores = getLocalStorageItem("userScores");
+          userScores.forEach((value, index) => {
+            if (value[0] === playerName) {
+              userScores[index][1] = value[1] + 1;
+            }
+          });
+          userScores.sort((a, b) => {
+            return a[1] === b[1] ? 0 : (a[1] > b[1] ? -1 : 1);
+          });
+          overwriteLocalStorageItem("userScores", userScores);
+        }
+      } else {
+        userHandText.classList.add("play-game__hand--red");
+        enemyHandText.classList.add("play-game__hand--green");
+        pushToLocalStorageItem("history", [-1, userHand, randomHand], 10);
+      }
+    }
   }
 
   function waitingCounter() {

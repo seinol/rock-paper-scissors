@@ -2,19 +2,18 @@
 <html lang="de">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="css/main.css">
 
     <script src="js/main.js" type="module"></script>
 
-    <title>WED1 Testat</title>
+    <title>Schere, Stein, Papier</title>
 </head>
 <body>
 
-<!-- TODO use more html5 tags rather than div -->
-<div class="main-container">
+<main class="main-container">
 
     <div id="js-start-page">
         <div class="change-server">
@@ -28,7 +27,7 @@
             <div id="js-ranking-content"></div>
         </div>
         <div class="start-game">
-            <hr>
+            <hr class="divider--solid">
             <p>Starte ein neues Spiel</p>
             <p>
                 <label for="js-player-name-input">Name</label>
@@ -67,7 +66,7 @@
     </div>
 
     <div id="js-history" class="history" hidden>
-        <hr>
+        <hr class="divider--solid">
         <div class="history__table">
             <table id="js-history-table">
                 <caption class="history__title">History</caption>
@@ -80,7 +79,7 @@
         </div>
     </div>
 
-</div>
+</main>
 
 </body>
 </html>

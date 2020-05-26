@@ -12,6 +12,10 @@ button {
     width: 100%;
 }
 
+.divider--solid {
+    border-top: 2px solid #bbb;
+}
+
 
 /* HISTORY */
 .history__title {
